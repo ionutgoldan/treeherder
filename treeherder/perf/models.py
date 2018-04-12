@@ -220,6 +220,7 @@ class PerformanceAlertSummary(models.Model):
     WONTFIX = 6
     FIXED = 7
     BACKED_OUT = 8
+    CONFIRMING = 9
 
     STATUSES = ((UNTRIAGED, 'Untriaged'),
                 (DOWNSTREAM, 'Downstream'),
@@ -228,7 +229,8 @@ class PerformanceAlertSummary(models.Model):
                 (INVESTIGATING, 'Investigating'),
                 (WONTFIX, 'Won\'t fix'),
                 (FIXED, 'Fixed'),
-                (BACKED_OUT, 'Backed out'))
+                (BACKED_OUT, 'Backed out'),
+                (CONFIRMING, 'Confirming'))
 
     status = models.IntegerField(choices=STATUSES, default=UNTRIAGED)
 
@@ -274,7 +276,8 @@ class PerformanceAlertSummary(models.Model):
                                      PerformanceAlertSummary.INVESTIGATING,
                                      PerformanceAlertSummary.WONTFIX,
                                      PerformanceAlertSummary.FIXED,
-                                     PerformanceAlertSummary.BACKED_OUT):
+                                     PerformanceAlertSummary.BACKED_OUT,
+                                     PerformanceAlertSummary.CONFIRMING):
                 return PerformanceAlertSummary.INVESTIGATING
             # keep status if one of the investigating ones
             return self.status

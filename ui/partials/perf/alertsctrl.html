@@ -76,6 +76,9 @@
 {{alertSummary.getStatusText()}}
           </button>
           <ul class="uib-dropdown-menu" uib-dropdown-menu aria-labelledby="status-dropdown">
+            <li role="menuitem" ng-show="user.is_staff" ng-if="alertSummary.hasSignificantAlerts()">
+              <a ng-click="alertSummary.markConfirming()" class="dropdown-item">Mark as confirming</a>
+            </li>
             <li role="menuitem">
               <a ng-click="copyTextToClipboard(alertSummary)" class="dropdown-item">Copy Summary</a>
             </li>
@@ -98,15 +101,15 @@
               <a ng-click="alertSummary.markInvestigating()" class="dropdown-item">Re-open</a>
             </li>
             <li role="menuitem" ng-show="user.is_staff"
-                ng-if="alertSummary.isInvestigating() || (alertSummary.isResolved() && !alertSummary.isWontfix())">
+                ng-if="alertSummary.isInvestigating() || alertSummary.isConfirming() || (alertSummary.isResolved() && !alertSummary.isWontfix())">
               <a ng-click="alertSummary.markWontfix()" class="dropdown-item">Mark as "won't fix"</a>
             </li>
             <li role="menuitem" ng-show="user.is_staff"
-                ng-if="alertSummary.isInvestigating() || (alertSummary.isResolved() && !alertSummary.isBackedout())">
+                ng-if="alertSummary.isInvestigating() || alertSummary.isConfirming() || (alertSummary.isResolved() && !alertSummary.isBackedout())">
               <a ng-click="alertSummary.markBackedout()" class="dropdown-item">Mark as backed out</a>
             </li>
             <li role="menuitem" ng-show="user.is_staff"
-                ng-if="alertSummary.isInvestigating() || (alertSummary.isResolved() && !alertSummary.isFixed())">
+                ng-if="alertSummary.isInvestigating() || alertSummary.isConfirming() || (alertSummary.isResolved() && !alertSummary.isFixed())">
               <a ng-click="alertSummary.markFixed()" class="dropdown-item">Mark as fixed</a>
             </li>
           </ul>
@@ -208,6 +211,10 @@
           Reset
         </button>
         <span ng-if="!anySelectedAndTriaged(alertSummary.alerts)">
+          <button class="btn btn-light-bordered" role="button"
+                  ng-click="markAlertsSignificant(alertSummary)" title="Acknowledge selected alerts as significant to whole summary">
+            <span class="fa fa-exclamation"></span> Significant
+          </button>
           <button class="btn btn-light-bordered" role="button"
                   ng-click="markAlertsAcknowledged(alertSummary)" title="Acknowledge selected alerts as valid">
             <span class="fa fa-check"></span> Acknowledge
