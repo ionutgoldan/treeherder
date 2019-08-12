@@ -120,3 +120,12 @@ def generate_new_alerts_in_series(signature):
                         'new_value': new_value,
                         't_value': t_value
                     })
+
+
+def cherry_picked_alerts(alert_summary_id):
+    alert_summary = PerformanceAlertSummary.objects.get(id=alert_summary_id)
+
+    alerts = list(alert_summary.alerts.all())
+    import pdb; pdb.set_trace()
+    return alerts
+    # now apply the sorting algorithm
