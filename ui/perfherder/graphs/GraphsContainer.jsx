@@ -135,6 +135,7 @@ class GraphsContainer extends React.Component {
     const { testData, highlightAlerts, highlightedRevisions } = this.props;
     let highlights = [];
 
+    // eslint-disable-next-line no-unused-vars
     for (const series of testData) {
       if (!series.visible) {
         continue;
@@ -145,6 +146,7 @@ class GraphsContainer extends React.Component {
         highlights = [...highlights, ...dataPoints];
       }
 
+      // eslint-disable-next-line no-unused-vars
       for (const rev of highlightedRevisions) {
         if (!rev) {
           continue;
