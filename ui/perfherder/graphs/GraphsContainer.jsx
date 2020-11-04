@@ -4,6 +4,7 @@ import React from 'react';
 import { Row, Col } from 'reactstrap';
 import PropTypes from 'prop-types';
 import {
+  VictoryBar,
   VictoryChart,
   VictoryLine,
   VictoryAxis,
@@ -322,7 +323,13 @@ class GraphsContainer extends React.Component {
   };
 
   render() {
-    const { testData, showTable, zoom, highlightedRevisions } = this.props;
+    const {
+      testData,
+      changelogData,
+      showTable,
+      zoom,
+      highlightedRevisions,
+    } = this.props;
     const {
       highlights,
       scatterPlotData,
@@ -478,6 +485,16 @@ class GraphsContainer extends React.Component {
                       />
                     ))}
 
+                  {changelogData.length > 0 && (
+                    <VictoryAxis
+                      tickValues={changelogData.map((i) => i.date)}
+                      style={{
+                        tickLabels: { display: 'none' },
+                        grid: { stroke: '#ff0000', strokeWidth: 1 },
+                      }}
+                    />
+                  )}
+
                   <VictoryScatter
                     name="scatter-plot"
                     symbol={({ datum }) => (datum._z ? datum._z[0] : 'circle')}
@@ -561,6 +578,7 @@ class GraphsContainer extends React.Component {
 
 GraphsContainer.propTypes = {
   testData: PropTypes.arrayOf(PropTypes.shape({})),
+  changelogData: PropTypes.arrayOf(PropTypes.shape({})),
   measurementUnits: PropTypes.instanceOf(Set).isRequired,
   updateStateParams: PropTypes.func.isRequired,
   zoom: PropTypes.shape({}),
@@ -575,6 +593,7 @@ GraphsContainer.propTypes = {
 
 GraphsContainer.defaultProps = {
   testData: [],
+  changelogData: [],
   zoom: {},
   selectedDataPoint: undefined,
   highlightAlerts: true,
