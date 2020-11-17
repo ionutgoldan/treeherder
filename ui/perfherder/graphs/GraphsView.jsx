@@ -37,6 +37,7 @@ class GraphsView extends React.Component {
       zoom: {},
       selectedDataPoint: null,
       highlightAlerts: true,
+      highlightChangelogData: true,
       highlightedRevisions: ['', ''],
       testData: [],
       changelogData: [],
@@ -280,6 +281,7 @@ class GraphsView extends React.Component {
       selectedDataPoint,
       zoom,
       highlightAlerts,
+      highlightChangelogData,
       highlightedRevisions,
       timeRange,
     } = this.state;
@@ -291,6 +293,7 @@ class GraphsView extends React.Component {
     const params = {
       series: newSeries,
       highlightAlerts: +highlightAlerts,
+      highlightChangelogData: +highlightChangelogData,
       timerange: timeRange.value,
       zoom,
     };
@@ -326,6 +329,7 @@ class GraphsView extends React.Component {
       testData,
       changelogData,
       highlightAlerts,
+      highlightChangelogData,
       highlightedRevisions,
       selectedDataPoint,
       loading,
@@ -411,6 +415,7 @@ class GraphsView extends React.Component {
                 showModal={showModal}
                 showTable={showTable}
                 highlightAlerts={highlightAlerts}
+                highlightChangelogData={highlightChangelogData}
                 highlightedRevisions={highlightedRevisions}
                 zoom={zoom}
                 selectedDataPoint={selectedDataPoint}

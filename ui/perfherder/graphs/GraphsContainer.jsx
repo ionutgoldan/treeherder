@@ -64,6 +64,7 @@ class GraphsContainer extends React.Component {
   componentDidUpdate(prevProps) {
     const {
       highlightAlerts,
+      highlightChangelogData,
       highlightedRevisions,
       testData,
       timeRange,
@@ -74,6 +75,7 @@ class GraphsContainer extends React.Component {
 
     if (
       prevProps.highlightAlerts !== highlightAlerts ||
+      prevProps.highlightChangelogData !== highlightChangelogData ||
       prevProps.highlightedRevisions !== highlightedRevisions
     ) {
       this.addHighlights();
@@ -329,6 +331,7 @@ class GraphsContainer extends React.Component {
       showTable,
       zoom,
       highlightedRevisions,
+      highlightChangelogData,
     } = this.props;
     const {
       highlights,
@@ -485,13 +488,52 @@ class GraphsContainer extends React.Component {
                       />
                     ))}
 
-                  {changelogData.length > 0 && (
-                    <VictoryAxis
-                      tickValues={changelogData.map((i) => i.date)}
+                  {highlightChangelogData && changelogData.length > 0 && (
+                    <VictoryBar
+                      key="changelog"
+                      data={changelogData.map((i) => ({
+                        x: i.date,
+                        y: zoomDomain.maxY,
+                        label: i.description,
+                      }))}
                       style={{
-                        tickLabels: { display: 'none' },
-                        grid: { stroke: '#ff0000', strokeWidth: 1 },
+                        data: { fill: '#d19900', width: 1 },
                       }}
+                      events={[
+                        {
+                          target: 'data',
+                          eventHandlers: {
+                            onMouseOver: () => {
+                              return [
+                                {
+                                  target: 'data',
+                                  mutation: () => ({
+                                    style: { fill: '#d19900', width: 3 },
+                                  }),
+                                },
+                                {
+                                  target: 'labels',
+                                  mutation: () => ({ active: true }),
+                                },
+                              ];
+                            },
+                            onMouseOut: () => {
+                              return [
+                                {
+                                  target: 'data',
+                                  mutation: () => ({
+                                    style: { fill: '#d19900', width: 2 },
+                                  }),
+                                },
+                                {
+                                  target: 'labels',
+                                  mutation: () => ({ active: false }),
+                                },
+                              ];
+                            },
+                          },
+                        },
+                      ]}
                     />
                   )}
 

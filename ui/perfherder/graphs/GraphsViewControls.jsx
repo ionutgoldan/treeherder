@@ -40,6 +40,7 @@ export default class GraphsViewControls extends React.Component {
       timeRange,
       updateStateParams,
       highlightAlerts,
+      highlightChangelogData,
       highlightedRevisions,
       updateTimeRange,
       hasNoData,
@@ -138,11 +139,26 @@ export default class GraphsViewControls extends React.Component {
                     color="darker-info"
                     outline
                     onClick={() =>
-                      updateStateParams({ highlightAlerts: !highlightAlerts })
+                      updateStateParams({
+                        highlightAlerts: !highlightAlerts,
+                      })
                     }
                     active={highlightAlerts}
                   >
                     Highlight alerts
+                  </Button>
+                  <Button
+                    className="ml-3"
+                    color="darker-info"
+                    outline
+                    onClick={() =>
+                      updateStateParams({
+                        highlightChangelogData: !highlightChangelogData,
+                      })
+                    }
+                    active={highlightChangelogData}
+                  >
+                    Highlight infra changes
                   </Button>
                 </Col>
               )}
