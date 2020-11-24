@@ -72,6 +72,7 @@ class GraphsView extends React.Component {
       zoom,
       selected,
       highlightAlerts,
+      highlightChangelogData,
       highlightedRevisions,
     } = queryString.parse(this.props.location.search);
 
@@ -87,6 +88,12 @@ class GraphsView extends React.Component {
 
     if (highlightAlerts) {
       updates.highlightAlerts = Boolean(parseInt(highlightAlerts, 10));
+    }
+
+    if (highlightChangelogData) {
+      updates.highlightChangelogData = Boolean(
+        parseInt(highlightChangelogData, 10),
+      );
     }
 
     if (highlightedRevisions) {

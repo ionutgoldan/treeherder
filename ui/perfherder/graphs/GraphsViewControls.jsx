@@ -174,6 +174,7 @@ GraphsViewControls.propTypes = {
   updateStateParams: PropTypes.func.isRequired,
   timeRange: PropTypes.shape({}).isRequired,
   highlightAlerts: PropTypes.bool.isRequired,
+  highlightChangelogData: PropTypes.bool.isRequired,
   highlightedRevisions: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(PropTypes.string),

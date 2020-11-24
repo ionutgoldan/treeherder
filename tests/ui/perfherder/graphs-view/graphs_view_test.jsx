@@ -17,6 +17,7 @@ import {
 import GraphsViewControls from '../../../../ui/perfherder/graphs/GraphsViewControls';
 import repos from '../../mock/repositories';
 import testData from '../../mock/performance_summary.json';
+import changelogData from '../../mock/infra_changelog.json';
 import seriesData from '../../mock/performance_signature_formatted.json';
 import seriesData2 from '../../mock/performance_signature_formatted2.json';
 import { getProjectUrl } from '../../../../ui/helpers/location';
@@ -66,11 +67,18 @@ const mockShowModal = jest
   .mockReturnValueOnce(true)
   .mockReturnValueOnce(false);
 
-const graphsViewControls = (data = testData, hasNoData = true) =>
-  render(
+const graphsViewControls = (
+  data = testData,
+  hasNoData = true,
+  handleUpdateStateParams,
+) => {
+  const updateStateParams = () => {};
+
+  return render(
     <GraphsViewControls
-      updateStateParams={() => {}}
+      updateStateParams={handleUpdateStateParams || updateStateParams}
       highlightAlerts={false}
+      highlightChangelogData
       highlightedRevisions={['', '']}
       updateTimeRange={() => {}}
       hasNoData={hasNoData}
@@ -80,6 +88,7 @@ const graphsViewControls = (data = testData, hasNoData = true) =>
       options={{}}
       getTestData={() => {}}
       testData={data}
+      changelogData={changelogData}
       getInitialData={() => ({
         platforms,
       })}
@@ -94,7 +103,7 @@ const graphsViewControls = (data = testData, hasNoData = true) =>
       updateData={() => {}}
     />,
   );
-
+};
 afterEach(cleanup);
 
 test('Changing the platform dropdown in the Test Data Modal displays expected tests', async () => {
@@ -360,4 +369,19 @@ describe('Mocked API calls', () => {
     );
   });
   // Add here high level GraphsView tests...
+});
+
+test("'Highlight infra changes' button can be turned off", async () => {
+  const updateStateParams = jest.fn();
+  const { getByText } = graphsViewControls(graphData, false, updateStateParams);
+
+  const infraChangesButton = await waitFor(() =>
+    getByText('Highlight infra changes'),
+  );
+
+  expect(infraChangesButton.classList).toContain('active');
+
+  fireEvent.click(infraChangesButton);
+
+  expect(updateStateParams).toHaveBeenCalledTimes(1);
 });

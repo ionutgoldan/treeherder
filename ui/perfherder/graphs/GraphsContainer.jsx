@@ -342,6 +342,16 @@ class GraphsContainer extends React.Component {
       width,
     } = this.state;
 
+    const affectedData = [];
+    changelogData.forEach((data) =>
+      scatterPlotData.some((dataPoint) => {
+        if (dataPoint.x > data.date) {
+          affectedData.push(dataPoint);
+        }
+        return dataPoint.x > data.date;
+      }),
+    );
+
     const yAxisLabel = this.computeYAxisLabel();
     const positionedTick = <VictoryLabel dx={-2} />;
     const positionedLabel = <VictoryLabel dy={24} />;
@@ -577,6 +587,7 @@ class GraphsContainer extends React.Component {
                         flyoutComponent={
                           <VictoryPortal>
                             <GraphTooltip
+                              affectedData={affectedData}
                               lockTooltip={lockTooltip}
                               closeTooltip={this.closeTooltip}
                               windowWidth={width}
