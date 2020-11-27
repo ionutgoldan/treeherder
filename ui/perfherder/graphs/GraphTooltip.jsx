@@ -19,7 +19,7 @@ import Clipboard from '../../shared/Clipboard';
 
 const GraphTooltip = ({
   testData,
-  affectedData,
+  infraAffectedData,
   user,
   updateData,
   projects,
@@ -35,7 +35,7 @@ const GraphTooltip = ({
     (item) => item.signature_id === datum.signature_id,
   );
 
-  const isDatumAffected = affectedData.some(
+  const isDatumAffected = infraAffectedData.some(
     (item) => item.revision === datum.revision,
   );
 

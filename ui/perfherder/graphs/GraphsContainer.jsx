@@ -28,6 +28,8 @@ import GraphTooltip from './GraphTooltip';
 const VictoryZoomSelectionContainer = createContainer('zoom', 'selection');
 
 class GraphsContainer extends React.Component {
+  infraChangeColor = '#d19900';
+
   constructor(props) {
     super(props);
     this.tooltip = React.createRef();
@@ -342,15 +344,22 @@ class GraphsContainer extends React.Component {
       width,
     } = this.state;
 
-    const affectedData = [];
+    let infraAffectedData = [];
+    const markDataPoints = 5;
+
     changelogData.forEach((data) =>
-      scatterPlotData.some((dataPoint) => {
-        if (dataPoint.x > data.date) {
-          affectedData.push(dataPoint);
+      scatterPlotData.some((dataPoint, index) => {
+        const affectedData = dataPoint.x > data.date;
+        if (affectedData) {
+          infraAffectedData.push(
+            scatterPlotData.slice(index, index + markDataPoints),
+          );
         }
-        return dataPoint.x > data.date;
+        return affectedData;
       }),
     );
+
+    infraAffectedData = flatMap(infraAffectedData);
 
     const yAxisLabel = this.computeYAxisLabel();
     const positionedTick = <VictoryLabel dx={-2} />;
@@ -507,7 +516,7 @@ class GraphsContainer extends React.Component {
                         label: i.description,
                       }))}
                       style={{
-                        data: { fill: '#d19900', width: 1 },
+                        data: { fill: this.infraChangeColor, width: 1 },
                       }}
                       events={[
                         {
@@ -518,12 +527,18 @@ class GraphsContainer extends React.Component {
                                 {
                                   target: 'data',
                                   mutation: () => ({
-                                    style: { fill: '#d19900', width: 3 },
+                                    style: {
+                                      fill: this.infraChangeColor,
+                                      width: 3,
+                                    },
                                   }),
                                 },
                                 {
                                   target: 'labels',
-                                  mutation: () => ({ active: true }),
+                                  mutation: () => ({
+                                    active: true,
+                                    y: 150,
+                                  }),
                                 },
                               ];
                             },
@@ -532,7 +547,10 @@ class GraphsContainer extends React.Component {
                                 {
                                   target: 'data',
                                   mutation: () => ({
-                                    style: { fill: '#d19900', width: 2 },
+                                    style: {
+                                      fill: this.infraChangeColor,
+                                      width: 2,
+                                    },
                                   }),
                                 },
                                 {
@@ -587,7 +605,7 @@ class GraphsContainer extends React.Component {
                         flyoutComponent={
                           <VictoryPortal>
                             <GraphTooltip
-                              affectedData={affectedData}
+                              infraAffectedData={infraAffectedData}
                               lockTooltip={lockTooltip}
                               closeTooltip={this.closeTooltip}
                               windowWidth={width}
