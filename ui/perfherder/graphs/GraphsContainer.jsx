@@ -359,7 +359,9 @@ class GraphsContainer extends React.Component {
       }),
     );
 
-    infraAffectedData = flatMap(infraAffectedData);
+    infraAffectedData = new Set(
+      flatMap(infraAffectedData).map((item) => item.revision),
+    );
 
     const yAxisLabel = this.computeYAxisLabel();
     const positionedTick = <VictoryLabel dx={-2} />;
