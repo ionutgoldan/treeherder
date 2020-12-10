@@ -15,5 +15,8 @@ class ChangelogViewSet(viewsets.ViewSet):
         """
         GET method implementation for list view
         """
-        serializer = ChangelogSerializer(get_changes(), many=True)
+        startdate = request.query_params.get('startdate')
+        enddate = request.query_params.get('enddate')
+
+        serializer = ChangelogSerializer(get_changes(startdate, enddate), many=True)
         return Response(serializer.data)
