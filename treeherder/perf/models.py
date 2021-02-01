@@ -9,7 +9,14 @@ from django.core.validators import MinLengthValidator
 from django.db import models
 from django.utils.timezone import now as django_now
 
-from treeherder.model.models import Job, MachinePlatform, OptionCollection, Push, Repository
+from treeherder.model.models import (
+    Job,
+    MachinePlatform,
+    OptionCollection,
+    Push,
+    Repository,
+    JobType,
+)
 from treeherder.utils import default_serializer
 
 SIGNATURE_HASH_LENGTH = 40
@@ -557,7 +564,13 @@ class BackfillRecord(models.Model):
     )
 
     status = models.IntegerField(choices=STATUSES, default=PRELIMINARY)
+
+    # Backfill outcome
     log_details = models.TextField()  # JSON expected, not supported by Django
+    job_type = models.ForeignKey(
+        JobType, null=True, on_delete=models.SET_NULL, related_name='backfill_records'
+    )
+    total_backfills_triggered = models.IntegerField(default=0)
 
     @property
     def id(self):

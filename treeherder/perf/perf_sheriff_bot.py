@@ -31,25 +31,12 @@ class PerfSheriffBot:
         backfill_tool: BackfillTool,
         secretary_tool: SecretaryTool,
         max_runtime: timedelta = None,
-        backfill_tool_disabled: bool = True,
-        secretary_tool_disabled: bool = True,
     ):
         self.report_maintainer = report_maintainer
         self.backfill_tool = backfill_tool
         self.secretary = secretary_tool
         self._woke_up_time = datetime.now()
         self._max_runtime = self.DEFAULT_MAX_RUNTIME if max_runtime is None else max_runtime
-
-        # TODO: feature flags; remove when enabled ->
-        self.__backfill_tool_disabled = backfill_tool_disabled
-        self.__secretary_tool_disabled = secretary_tool_disabled
-
-        # extra precautions
-        if self.__backfill_tool_disabled:
-            self.backfill_tool = None
-        if self.__secretary_tool_disabled:
-            self.secretary = None
-        # -> up to here
 
     def sheriff(self, since: datetime, frameworks: List[str], repositories: List[str]):
         self.assert_can_run()
@@ -78,10 +65,6 @@ class PerfSheriffBot:
         return self.report_maintainer.provide_updated_reports(since, frameworks, repositories)
 
     def _backfill(self):
-        # TODO: feature flags; remove when enabled ->
-        if self.__backfill_tool_disabled or self.__secretary_tool_disabled:
-            return
-        # -> up to here
 
         left = self.secretary.backfills_left(on_platform='linux')
         total_consumed = 0

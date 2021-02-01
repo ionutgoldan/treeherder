@@ -1,4 +1,7 @@
+import hashlib
 import logging
+from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import List
 
 import jsone
@@ -11,7 +14,18 @@ logger = logging.getLogger(__name__)
 DEFAULT_ROOT_URL = 'https://firefox-ci-tc.services.mozilla.com'
 
 
-class TaskclusterModel:
+class TaskclusterModel(ABC):
+    """Javascript -> Python rewrite of frontend's TaskclusterModel"""
+
+    def __init__(self, root_url, client_id=None, access_token=None):
+        self.root_url = root_url
+
+    @abstractmethod
+    def trigger_action(self, action, task_id, decision_task_id, input, root_url=None) -> str:
+        pass
+
+
+class TaskclusterModelImpl(TaskclusterModel):
     """Javascript -> Python rewrite of frontend's TaskclusterModel"""
 
     def __init__(self, root_url, client_id=None, access_token=None):
@@ -32,13 +46,9 @@ class TaskclusterModel:
         self.queue = taskcluster.Queue(options)
         self.auth = taskcluster.Auth(options)
 
-    def set_root_url(self, root_url):
-        for service in (self.hooks, self.queue, self.auth):
-            service.options['rootUrl'] = root_url
-
     def trigger_action(self, action, task_id, decision_task_id, input, root_url=None) -> str:
         if root_url is not None:
-            self.set_root_url(root_url)
+            self.__set_root_url(root_url)
 
         actions_context = self._load(decision_task_id, task_id)
         action_to_trigger = self._get_action(actions_context['actions'], action)
@@ -50,6 +60,10 @@ class TaskclusterModel:
             input=input,
             static_action_variables=actions_context['staticActionVariables'],
         )
+
+    def __set_root_url(self, root_url):
+        for service in (self.hooks, self.queue, self.auth):
+            service.options['rootUrl'] = root_url
 
     def _load(self, decision_task_id: str, task_id: str) -> dict:
         if not decision_task_id:
@@ -161,3 +175,13 @@ class TaskclusterModel:
             all(tag in task_tags and task_tags[tag] == tag_set[tag] for tag in tag_set.keys())
             for tag_set in context
         )
+
+
+class TaskclusterModelProxy(TaskclusterModel):
+    def trigger_action(self, action, task_id, decision_task_id, input, root_url=None) -> str:
+        hash_suffix = self.__hash(task_id)
+        return f'fake-backfill-task-id-for-{task_id}-{hash_suffix}'
+
+    def __hash(self, task_id) -> str:
+        now = str(datetime.now())
+        return hashlib.sha256(f'{now}-{task_id}').hexdigest()
